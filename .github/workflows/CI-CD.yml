@@ -25,10 +25,4 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/wisecow:latest
 
-      - name: Set up Kubeconfig
-        run: |
-          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
-
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -f wisdom-server-k8s.yaml
+      
