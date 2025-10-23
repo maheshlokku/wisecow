@@ -10,19 +10,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Step 2: Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # Step 3: Build and push Docker image
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/wisecow:latest
+          # context: ./ if Dockerfile is in a subfolder, uncomment and update
+          # context: ./docker
 
-      
+      # Step 4: Set up Kubernetes
+      - name: Set up Kubeconfig
+        run: |
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
+
+      # Step 5: Deploy to Kubernetes
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f wisdom-server-k8s.yaml
+
+      # Step 6: Optional - verify deployment
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/wisecow-deployment
+          kubectl get pods -o wide
