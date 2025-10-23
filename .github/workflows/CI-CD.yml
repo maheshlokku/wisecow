@@ -33,7 +33,7 @@ jobs:
       # Step 4: Set up Kubernetes
       - name: Set up Kubeconfig
         run: |
-            mkdir -p $HOME/.kube
+          mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
 
       # Step 5: Deploy to Kubernetes
