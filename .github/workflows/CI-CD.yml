@@ -19,13 +19,11 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build Docker image
-      run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/wisecow:latest .
-
-    - name: Push Docker image
-      run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/wisecow:latest
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/wisecow:latest
 
     - name: Set up Kubeconfig
       run: |
@@ -33,4 +31,4 @@ jobs:
 
     - name: Deploy to Kubernetes
       run: |
-        kubectl apply -f wisdom-server-k8s.yaml/
+        kubectl apply -f wisdom-server-k8s.yaml
